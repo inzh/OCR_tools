@@ -7,17 +7,19 @@ import tools
 from configparser import ConfigParser
 
 
-def ocr():
+def ocr(path,filename,access_token):
     request_url = "https://aip.baidubce.com/rest/2.0/ocr/v1/idcard"
     # 二进制方式打开图片文件
-    f = open('D:\\SKM_754e20062111120_0001.jpg', 'rb')
+    print(path+filename)
+    f = open(path+"\\"+filename, 'rb')
     img = base64.b64encode(f.read())
     params = {"id_card_side":"front","image":img}
     request_url = request_url + "?access_token=" + access_token
     headers = {'content-type': 'application/x-www-form-urlencoded'}
     response = requests.post(request_url, data=params, headers=headers)
     if response:
-        return response
+        print(response.json()["words_result"]["公民身份号码"]["words"])
+        print(response.json()["words_result"]["姓名"]["words"])
 
 def get_token():
     # client_id = "2MLY2GOxSa7Y6uqoLhP4CN6E"
