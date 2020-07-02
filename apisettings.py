@@ -29,7 +29,7 @@ def ocr(path,filename,access_token):
         tools.sheet_append(name ,sex, nation, birth, num, address, filename)
     else:
         print("识别错误")
-        tools.sheet_append(name="识别错误", filename = filename)
+        tools.sheet_append(name="识别错误", sex="", nation="", birth="", num="", address="", filename = filename)
     print("\033[32m-----------------------------------")
 
 def get_token():
@@ -57,7 +57,7 @@ def configSeting():
     conf.add_section("config")
     conf.set('config', 'Api Key', ak)
     conf.set('config', 'Secret Key', sk)
-    with open('config.cfg', 'w') as fw:
+    with open('config.ini', 'w') as fw:
         conf.write(fw)
     print("保存成功")
     print("---------------------------------------------")

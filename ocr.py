@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # encoding:utf-8
 import apisettings as apis
-import os,time,tools
+import os,time,tools,msvcrt
 global path,access_token
 
 
@@ -67,4 +67,7 @@ if __name__ =="__main__":
     checkapi()
     setpath()
     ocrmain()
-    print(path)
+    print("识别完成，按d退出程序")
+    while True:
+        if ord(msvcrt.getch()) in [68, 100]:
+            break

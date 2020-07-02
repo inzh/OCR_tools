@@ -5,19 +5,19 @@ def configSeting(ak, sk):
     conf.add_section("config")
     conf.set('config', 'Api Key', ak)
     conf.set('config', 'Secret Key', sk)
-    with open('config.cfg', 'w') as fw:
+    with open('config.ini', 'w') as fw:
         conf.write(fw)
 
 def getAK():
     conf = ConfigParser()
-    file = 'config.cfg'
+    file = 'config.ini'
     conf.read(file)
     ak = conf.get("config","api key")
     return ak
 
 def getSK():
     conf = ConfigParser()
-    file = 'config.cfg'
+    file = 'config.ini'
     conf.read(file)
     sk = conf.get("config", "secret key")
     return sk

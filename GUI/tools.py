@@ -21,7 +21,7 @@ def configSeting(ak, sk):
     conf.add_section("config")
     conf.set('config', 'Api Key', ak)
     conf.set('config', 'Secret Key', sk)
-    with open('config.cfg', 'w') as fw:
+    with open('config.ini', 'w') as fw:
         conf.write(fw)
 
 def PathSeting(path):
