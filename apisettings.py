@@ -1,29 +1,40 @@
 #!/usr/bin/python3
 # encoding:utf-8
 
-import requests
-import base64
-import tools
+import requests,base64,tools
 from configparser import ConfigParser
-
+from colorama import init
+init(autoreset=True)
 
 def ocr(path,filename,access_token):
     request_url = "https://aip.baidubce.com/rest/2.0/ocr/v1/idcard"
+
+    print("文件名： " + path + "\\" + filename)
     # 二进制方式打开图片文件
-    print(path+filename)
     f = open(path+"\\"+filename, 'rb')
     img = base64.b64encode(f.read())
     params = {"id_card_side":"front","image":img}
     request_url = request_url + "?access_token=" + access_token
     headers = {'content-type': 'application/x-www-form-urlencoded'}
     response = requests.post(request_url, data=params, headers=headers)
-    if response:
-        print(response.json()["words_result"]["公民身份号码"]["words"])
-        print(response.json()["words_result"]["姓名"]["words"])
+    if response.json()["image_status"] == "normal":
+        name = response.json()["words_result"]["姓名"]["words"]
+        sex = response.json()["words_result"]["性别"]["words"]
+        nation = response.json()["words_result"]["民族"]["words"]
+        birth = response.json()["words_result"]["出生"]["words"]
+        num = response.json()["words_result"]["公民身份号码"]["words"]
+        address = response.json()["words_result"]["住址"]["words"]
+        print("姓名："+ name)
+        print("身份证号码："+ num)
+        tools.sheet_append(name ,sex, nation, birth, num, address, filename)
+    else:
+        print("识别错误")
+        tools.sheet_append(name="识别错误", filename = filename)
+    print("\033[32m-----------------------------------")
 
 def get_token():
-    # client_id = "2MLY2GOxSa7Y6uqoLhP4CN6E"
-    # client_secret = "fO1PQKpGCyGLKCONriLVMWodmBbbdymt"
+
+
     client_id = tools.getAK()
     client_secret = tools.getSK()
 

@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 # encoding:utf-8
 from tkinter import *
-import MenuBarUi
-import ocr, tools
+from GUI import MenuBarUi, ocr
+import tools
 
 class MainUi(Frame):
     def __init__(self, master=None):
@@ -20,7 +20,7 @@ class MainUi(Frame):
         self.master.resizable(0, 0)
 
         MenuBar = Menu(self.master)
-        MenuBar.add_cascade(label="开始运行", command=lambda:ocr.main(text))
+        MenuBar.add_cascade(label="开始运行", command=lambda: ocr.main(text))
         MenuBar.add_cascade(label="百度API设置", command=MenuBarUi.createAPiUi)
         MenuBar.add_cascade(label="选择图片目录", command=MenuBarUi.createPathUi)
         self.master.config(menu=MenuBar)

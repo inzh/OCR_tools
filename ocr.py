@@ -1,66 +1,70 @@
 #!/usr/bin/python3
 # encoding:utf-8
-import requests
-import base64
-import tools
-from tkinter import *
-import time, threading
-'''
-身份证识别
-'''
+import apisettings as apis
+import os,time,tools
+global path,access_token
 
-key = None
-value = None
-access_token = None
 
-def ocr():
-    request_url = "https://aip.baidubce.com/rest/2.0/ocr/v1/idcard"
-    # 二进制方式打开图片文件
-    f = open('D:\\SKM_754e20062111120_0001.jpg', 'rb')
-    img = base64.b64encode(f.read())
-    params = {"id_card_side":"front","image":img}
-    request_url = request_url + "?access_token=" + access_token
-    headers = {'content-type': 'application/x-www-form-urlencoded'}
-    response = requests.post(request_url, data=params, headers=headers)
-    if response:
-        return response
 
-def get_token():
-    client_id = tools.getAK()
-    client_secret = tools.getSK()
-    host = 'https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id='+client_id+'&client_secret='+client_secret
-    response = requests.post(host)
-    # print(response.json())
-    token = response.json()
+from colorama import init
+init(autoreset=True)
+
+
+def printline():
+    print("-----------------------------------")
+
+def welcomeinfo():
+    print("--------------------------------------------------")
+    print("           欢迎使用身份证批量OCR工具"+"\033[31m[v0.0.1]")
+    print("\033[0m             -- 作者 | 收集阳光的暖风 --")
+    print('\033[0m--------------------------------------------------')
+
+def checkapi():
+    token = None
+    while(token == None):
+        print("\033[32m正在检查百度Api是否正确设置......")
+        token = apis.get_token()
+        if token==False:
+            print("\033[31m设置错误！ 请输入正确的Api Key和Secret Key")
+            apis.configSeting()
+            token = apis.get_token()
     global access_token
-    access_token = token["access_token"]
+    access_token = token
+    # print(access_token)
+    print("\033[32m设置正确！")
+    print("-----------------------------------")
+    return True
 
-
-def output(text):
-    str = key +'-----'+ value +'\n'
-    text.insert(END,str)
-
-def getres(text):
-    res = ocr()
-    global key
-    global value
-    key = res.json()['words_result']['姓名']['words']
-    value = res.json()['words_result']['公民身份号码']['words']
-    output(text)
-    time.sleep(2)
-    output(text)
-    time.sleep(2)
-    output(text)
-    time.sleep(2)
-    output(text)
-    time.sleep(2)
-    output(text)
-    time.sleep(2)
+def setpath():
+    global path
+    path = input("请填写身份证图片所在文件夹：")
+    while not os.path.exists(path):
+        print("\033[31m路径设置错误! 请重新输入")
+        printline()
+        path = input("请填写身份证图片所在文件夹：")
+    print("\033[32m路径设置正确")
+    printline()
 
 
 
-def main(text):
-    get_token()
-    t = threading.Thread(target=getres(text))
-    t.setDaemon(True)
-    t.start()
+
+def ocrmain():
+    tools.create_sheet()
+    tools.set_sheet()
+    f_list = os.listdir(path)
+    # print f_list
+    for filename in f_list:
+        # os.path.splitext():分离文件名与扩展名
+        suf = os.path.splitext(filename)[1]
+        if suf == '.jpg' or suf == '.png':
+            global access_token
+            apis.ocr(path,filename,access_token)
+            time.sleep(1)
+
+
+if __name__ =="__main__":
+    welcomeinfo()
+    checkapi()
+    setpath()
+    ocrmain()
+    print(path)
